@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autorização concluída — Palavra Pra Você Hoje</title>
+<link rel="stylesheet" href="estilo.css">
+<style>
+  .caixa {
+    background: #fff; border: 1px solid #ddd6c6; border-radius: 8px;
+    padding: 1rem; margin: 1rem 0;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .92rem; word-break: break-all;
+  }
+  button {
+    background: var(--noite); color: var(--creme); border: 0; border-radius: 6px;
+    padding: .6rem 1.1rem; font-size: .95rem; cursor: pointer;
+  }
+  button:hover { background: var(--noite-claro); }
+  .erro { color: #a8321f; font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <div class="interno">
+    <h1>Autorização concluída</h1>
+    <p>Palavra Pra Você Hoje</p>
+  </div>
+</header>
+<main>
+  <div id="conteudo"><p>Lendo a resposta do TikTok…</p></div>
+  <p class="data">
+    Este código é de uso único e expira em poucos minutos. Ele fica apenas nesta página,
+    no seu navegador — não é enviado a lugar nenhum.
+  </p>
+  <p><a href="index.html">Voltar ao início</a></p>
+</main>
+<footer>
+  <div class="interno">
+    Palavra Pra Você Hoje · <a href="termos.html">Termos de Uso</a> ·
+    <a href="privacidade.html">Política de Privacidade</a>
+  </div>
+</footer>
+<script>
+(function () {
+  var p = new URLSearchParams(window.location.search);
+  var code = p.get("code");
+  var state = p.get("state");
+  var erro = p.get("error");
+  var descricao = p.get("error_description");
+  var alvo = document.getElementById("conteudo");
+
+  function elemento(tag, texto, classe) {
+    var e = document.createElement(tag);
+    if (texto !== undefined) e.textContent = texto;
+    if (classe) e.className = classe;
+    return e;
+  }
+
+  alvo.textContent = "";
+
+  if (erro) {
+    alvo.appendChild(elemento("h2", "A autorização não foi concluída"));
+    alvo.appendChild(elemento("p", "Erro: " + erro, "erro"));
+    if (descricao) alvo.appendChild(elemento("p", descricao));
+    alvo.appendChild(elemento("p", "Feche esta aba e rode o comando de autorização novamente."));
+    return;
+  }
+
+  if (!code) {
+    alvo.appendChild(elemento("h2", "Nada para mostrar"));
+    alvo.appendChild(elemento("p", "Abra esta página pelo fluxo de autorização do TikTok."));
+    return;
+  }
+
+  alvo.appendChild(elemento("h2", "Copie o código abaixo"));
+  alvo.appendChild(elemento("p", "Cole no terminal, na etapa que está aguardando o código."));
+
+  var caixa = elemento("div", code, "caixa");
+  caixa.id = "codigo";
+  alvo.appendChild(caixa);
+
+  var botao = elemento("button", "Copiar código");
+  botao.addEventListener("click", function () {
+    navigator.clipboard.writeText(code).then(function () {
+      botao.textContent = "Copiado";
+      setTimeout(function () { botao.textContent = "Copiar código"; }, 2000);
+    });
+  });
+  alvo.appendChild(botao);
+
+  if (state) {
+    var s = elemento("p");
+    s.appendChild(elemento("strong", "state: "));
+    s.appendChild(document.createTextNode(state));
+    s.className = "data";
+    alvo.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
